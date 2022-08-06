@@ -1,30 +1,19 @@
-// 載入 express 並建構應用程式伺服器
 const express = require('express')
-const mongoose = require('mongoose') // 載入 mongoose
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
-const Todo = require('./models/todo') // 載入 Todo model
 
 const routes = require('./routes')
-const app = express()
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+require('./config/mongoose')
 
-const db = mongoose.connection
-// 連線異常
-db.on('error', () => {
-  console.log('mongodb error!')
-})
-// 連線成功
-db.once('open', () => {
-  console.log('mongodb connected!')
-})
+const app = express()
+
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
-
 app.use(bodyParser.urlencoded({ extended: true }))
 // 設定首頁路由
 app.use(methodOverride('_method'))
+
 app.use(routes)
 
 // 設定 port 3000
